@@ -7,7 +7,7 @@ from django.urls import reverse
 from .models import ModeloDeCorrida, HistoricoCorrida
 from .forms import ModeloDeCorridaForm, HistoricoCorridaForm 
 
-# Função auxiliar para simular o usuário logado para o CRUD
+# função para simular o usuário logado para o CRUD
 def get_user_logged_in():
     """Tenta obter o usuário de teste; se não existir, o cria."""
     try:
@@ -20,11 +20,11 @@ def popular_banco_dados(request):
     """Cria dados de teste para demonstração (Rota /popular-bd/)."""
     user = get_user_logged_in()
     
-    # Modelos de corrida 
+    # modelos de corrida 
     ModeloDeCorrida.objects.get_or_create(usuario=user, nome='Treino Padrão 5km', defaults={'distancia_planejada_km': 5.0, 'duracao_estimada_min': 30, 'objetivo': 'Manter ritmo'})
     ModeloDeCorrida.objects.get_or_create(usuario=user, nome='Treino Leve 3km', defaults={'distancia_planejada_km': 3.0, 'duracao_estimada_min': 20, 'objetivo': 'Recuperação'})
     
-    # Histórico de corridas 
+    # histórico de corridas 
     try:
         modelo_5k = ModeloDeCorrida.objects.get(usuario=user, nome='Treino Padrão 5km')
         if HistoricoCorrida.objects.filter(usuario=user).count() < 2:
@@ -35,7 +35,7 @@ def popular_banco_dados(request):
     
     return HttpResponse("Banco de dados populado com sucesso para o usuário 'fulano'!")
 
-# Consultar os dados do sistema
+# consultar os dados do sistema
 def listagem_completa(request):
     usuarios = User.objects.all()
     modelos = ModeloDeCorrida.objects.all().order_by('nome') 
@@ -49,7 +49,7 @@ def listagem_completa(request):
     
     return render(request, 'listagem_completa.html', context)
 
-# Criação de modelo
+# criação de modelo
 def criar_modelo_corrida(request):
     usuario_logado = get_user_logged_in() 
     
@@ -66,7 +66,7 @@ def criar_modelo_corrida(request):
     context = {'form': form, 'titulo': 'Cadastrar Novo Modelo de Corrida'}
     return render(request, 'modelo_form.html', context)
 
-# Edição de modelo
+# edição de modelo
 def editar_modelo_corrida(request, pk):
     usuario_logado = get_user_logged_in()
     modelo = get_object_or_404(ModeloDeCorrida, pk=pk, usuario=usuario_logado) 
@@ -82,7 +82,7 @@ def editar_modelo_corrida(request, pk):
     context = {'form': form, 'titulo': f'Editar Modelo: {modelo.nome}'}
     return render(request, 'modelo_form.html', context)
 
-# Exclusão de modelo 
+# exclusão de modelo 
 def excluir_modelo_corrida(request, pk):
     usuario_logado = get_user_logged_in()
     modelo = get_object_or_404(ModeloDeCorrida, pk=pk, usuario=usuario_logado)
@@ -94,7 +94,7 @@ def excluir_modelo_corrida(request, pk):
     context = {'item': modelo, 'tipo': 'Modelo de Corrida'}
     return render(request, 'confirmar_exclusao.html', context) 
 
-# Registrar histórico 
+# registrar histórico 
 def registrar_historico(request):
     usuario_logado = get_user_logged_in() 
 
@@ -113,7 +113,7 @@ def registrar_historico(request):
     context = {'form': form, 'titulo': 'Registrar Nova Corrida'}
     return render(request, 'historico_form.html', context)
 
-# Edição de histórico
+# edição de histórico
 def editar_historico(request, pk):
     usuario_logado = get_user_logged_in()
     historico = get_object_or_404(HistoricoCorrida, pk=pk, usuario=usuario_logado)
@@ -128,10 +128,10 @@ def editar_historico(request, pk):
         form = HistoricoCorridaForm(instance=historico)
         form.fields['modelo_corrida'].queryset = modelos_disponiveis
 
-    context = {'form': form, 'titulo': f'Editar Registro Histórico ID: {historico.id}'}
+    context = {'form': form, 'titulo': f'Editar Registro de Histórico '}
     return render(request, 'historico_form.html', context)
 
-# Exclusão de histórico 
+# exclusão de histórico 
 def excluir_historico(request, pk):
     usuario_logado = get_user_logged_in()
     historico = get_object_or_404(HistoricoCorrida, pk=pk, usuario=usuario_logado)
